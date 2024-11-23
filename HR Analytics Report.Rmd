@@ -1,0 +1,124 @@
+---
+title: "HR Analytics Report"
+author: "L. di Bernardo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Set global options
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## R Markdown
+
+This report provides an analysis of HR analytics data, exploring key metrics such as employee demographics, job satisfaction, salary distribution, and turnover intentions. 
+The codes under the hood have been left visible on purpose to enable a view of the work underneath.
+
+```{r}
+# Load necessary libraries
+library(tidyverse)
+
+# Load the dataset
+hr_data <- read.csv("hr_analytics_mockup.csv")
+
+# Preview the dataset
+
+# Summary statistics
+summary(hr_data)
+
+# Check for missing values
+colSums(is.na(hr_data))
+```
+
+## Employee Demogrpahics
+
+# Gender Distribution
+
+```{r}
+
+# Gender distribution
+gender_counts <- hr_data %>% count(Gender)
+
+# Plot gender distribution
+gender_counts %>%
+  ggplot(aes(x = Gender, y = n, fill = Gender)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Gender Distribution", x = "Gender", y = "Count") +
+  theme_minimal()
+```
+
+# Department Breakdown
+
+```{r}
+# Department distribution
+department_counts <- hr_data %>% count(Department)
+
+# Plot department distribution
+department_counts %>%
+  ggplot(aes(x = reorder(Department, -n), y = n, fill = Department)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Employees by Department", x = "Department", y = "Count") +
+  theme_minimal()
+
+```
+
+## Salary Analysis
+
+# Salary Distrubution
+
+```{r}
+# Salary distribution plot
+hr_data %>%
+  ggplot(aes(x = MonthlySalary)) +
+  geom_histogram(binwidth = 500, fill = "skyblue", color = "black") +
+  labs(title = "Salary Distribution", x = "Monthly Salary", y = "Frequency") +
+  theme_minimal()
+
+```
+
+# Salary by Department
+
+```{r}
+# Boxplot of salary by department
+hr_data %>%
+  ggplot(aes(x = Department, y = MonthlySalary, fill = Department)) +
+  geom_boxplot() +
+  labs(title = "Salary by Department", x = "Department", y = "Monthly Salary") +
+  theme_minimal()
+
+```
+
+## Turnover Analysis
+
+# Turnover Rate 
+
+```{r}
+# Turnover rate calculation
+turnover_rate <- mean(hr_data$TurnoverIntention) * 100
+paste("Turnover Rate: ", round(turnover_rate, 2), "%")
+
+```
+
+# Turnover by Job Satisfaction
+```{r}
+# Turnover by job satisfaction
+hr_data %>%
+  ggplot(aes(x = as.factor(JobSatisfaction), fill = as.factor(TurnoverIntention))) +
+  geom_bar(position = "fill") +
+  labs(title = "Turnover by Job Satisfaction", x = "Job Satisfaction (1-5)", y = "Proportion", fill = "Turnover Intention") +
+  theme_minimal()
+
+```
+
+# Insight and Recommendations
+
+1. Demographics: Gender distribution and department representation highlight diversity in the workforce.
+2. Salary Analysis: Salary disparities between departments may need attention to ensure equity.
+3. Turnover Analysis: Job satisfaction is strongly associated with turnover intention; initiatives to improve satisfaction may reduce attrition.
+
+# Conclusion
+
+This analysis provides actionable insights into workforce dynamics. Future steps could include predictive modeling to identify employees at risk of leaving and targeted initiatives to improve employee retention.
+
+
